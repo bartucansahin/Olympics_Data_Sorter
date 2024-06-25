@@ -1,0 +1,3 @@
+*.log
+athlete_events.csv
+__pycache__/
