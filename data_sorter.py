@@ -28,17 +28,32 @@ def sort_countries_by_medals(df):
     sorted_medals = medals_pivot[['Gold', 'Silver', 'Bronze', 'Total']].sort_values(by='Total', ascending=False)
     return sorted_medals
 
-def search_list(items, target):
-    results = []
-    for item in items:
-        if item == target:
-            results.append(item)
-    return results
+class Search_Bar:
+    def __init__(self):
+        self.objects = self._initialize_objects()
+
+    def _initialize_objects(self):
+        sports = list(all_sports)
+        athletes = list(all_athletes)
+        countries = list(all_countries)
+
+        return sports + athletes + countries
+
+    def search(self, word):
+
+        word_lower = word.lower()
+
+        matches = [obj for obj in self.objects if word in obj]
+        matches.sort(key=lambda obj: (not obj.startswith(word), obj))
+        
+        for match in matches:
+            print(match)
 
 
 def main():
 
-    search_list(search_values, "Swimming")
+    test = Search_Bar()
+    result = test.search("Ald")
 
 if __name__ == "__main__":
     main()
