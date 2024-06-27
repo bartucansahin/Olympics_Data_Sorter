@@ -74,7 +74,6 @@ class Search_Bar:
 
 def display_info(value):
     if value in df['Name'].values:
-        title = value
         events_attended = set(df[df['Name'] == value]['Event'])
         active_years = sorted(set(df[df['Name'] == value]['Year']))
         years_list = list(active_years)
@@ -87,29 +86,59 @@ def display_info(value):
 
         attended_olympics = df[df['Name'] == value][['Year', 'City']].drop_duplicates()
 
-        print(title)
-        for event in events_attended:
-            print(event)
-        print(f"From {years_list[0]} to {years_list[-1]}")
+        info_dict = {
+            "Name": value,
+            "events_attended": list(events_attended),
+            "active_years": years_list,
+            "gold_medals": gold_medals,
+            "silver_medals": silver_medals,
+            "bronze_medals": bronze_medals,
+            "total_medals": total_medals,
+            "attended_olympics": attended_olympics.to_dict(orient='records')
+        }
 
-        if total_medals == 0:
-            print(f"{value} has not won any medals in The Olympics.")
-        else:
-            print(f"{gold_medals} Gold Medals")
-            print(f"{silver_medals} Silver Medals")
-            print(f"{bronze_medals} Bronze Medals")
-        
-        for index, row in attended_olympics.iterrows():
-            print(f"{row['Year']}, {row['City']}")
+        return info_dict
 
-        
+    elif value in df['Team'].values:
+        team_df = df[df['Team'] == value]
+        total_attendance = len(team_df['Games'].unique())
+        unique_athletes = len(team_df['Name'].unique())
+
+        team_gold_medals = team_df[team_df['Medal'] == 'Gold'].shape[0]
+        team_silver_medals = team_df[team_df['Medal'] == 'Silver'].shape[0]
+        team_bronze_medals = team_df[team_df['Medal'] == 'Bronze'].shape[0]
+        team_total_medals = team_gold_medals + team_silver_medals + team_bronze_medals
+
+        top_sports = (team_df[team_df['Medal'].notna()]
+                      .groupby('Sport')
+                      .size()
+                      .sort_values(ascending=False)
+                      .head(5)
+                      .index)
+
+        top_sports_medals = {sport: {
+            "gold": team_df[(team_df['Sport'] == sport) & (team_df['Medal'] == 'Gold')].shape[0],
+            "silver": team_df[(team_df['Sport'] == sport) & (team_df['Medal'] == 'Silver')].shape[0],
+            "bronze": team_df[(team_df['Sport'] == sport) & (team_df['Medal'] == 'Bronze')].shape[0],
+        } for sport in top_sports}
+
+        team_info_dict = {
+            "Team": value,
+            "total_attendance": total_attendance,
+            "unique_athletes": unique_athletes,
+            "gold_medals": team_gold_medals,
+            "silver_medals": team_silver_medals,
+            "bronze_medals": team_bronze_medals,
+            "total_medals": team_total_medals,
+            "top_sports_medals": top_sports_medals
+        }
+
+        return team_info_dict
 
 def main():
 
-    search_bar = Search_Bar()
-    results = search_bar.search("Swim")
-    for result in results:
-        print(result)
+    print(display_info("France"))
+
 
 if __name__ == "__main__":
     main()
