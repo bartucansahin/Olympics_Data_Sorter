@@ -135,9 +135,40 @@ def display_info(value):
 
         return team_info_dict
 
+    elif value in df['Sport'].values:
+        sport_df = df[df['Sport'] == value]
+
+        top_athletes = (sport_df[sport_df['Medal'].notna()]
+                        .groupby('Name')
+                        .size()
+                        .sort_values(ascending=False)
+                        .head(5)
+                        .index)
+
+        top_athletes_medals = {
+            athlete: {
+                "gold": sport_df[(sport_df['Name'] == athlete) & (sport_df['Medal'] == 'Gold')].shape[0],
+                "silver": sport_df[(sport_df['Name'] == athlete) & (sport_df['Medal'] == 'Silver')].shape[0],
+                "bronze": sport_df[(sport_df['Name'] == athlete) & (sport_df['Medal'] == 'Bronze')].shape[0],
+                "total": sport_df[(sport_df['Name'] == athlete) & (sport_df['Medal'].isin(['Gold', 'Silver', 'Bronze']))].shape[0]
+            }
+            for athlete in top_athletes
+        }
+
+
+        unique_events = sport_df['Event'].value_counts().index.tolist()
+
+        sport_info_dict = {
+            "Sport": value,
+            "top_athletes_medals": top_athletes_medals,
+            "unique_events": unique_events
+        }
+
+        return sport_info_dict
+
 def main():
 
-    print(display_info("France"))
+    print(display_info("Sailing"))
 
 
 if __name__ == "__main__":
