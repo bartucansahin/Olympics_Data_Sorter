@@ -40,14 +40,37 @@ class Search_Bar:
         return sports + athletes + countries
 
     def search(self, word):
-
         word_lower = word.lower()
+        matches = [obj for obj in self.objects if word_lower in obj.lower()]
+        matches.sort(key=lambda obj: (not obj.lower().startswith(word_lower), obj))
 
-        matches = [obj for obj in self.objects if word in obj]
-        matches.sort(key=lambda obj: (not obj.startswith(word), obj))
-        
+        results = []
         for match in matches:
-            print(match)
+            if match in all_sports:
+                result = {
+                    "id": None,
+                    "Name": match,
+                    "type": 0,
+                    "NOC": None
+                }
+            elif match in all_athletes:
+                athlete_info = df[df['Name'].str.lower() == match.lower()].iloc[0]
+                result = {
+                    "id": int(athlete_info['ID']),
+                    "Name": athlete_info['Name'],
+                    "type": 1,
+                    "NOC": None
+                }
+            elif match in all_countries:
+                result = {
+                    "id": None,
+                    "Name": match,
+                    "type": 2,
+                    "NOC": match
+                }
+            results.append(result)
+
+        return results
 
 def display_info(value):
     if value in df['Name'].values:
@@ -83,7 +106,10 @@ def display_info(value):
 
 def main():
 
-    display_info("Arvo Ossian Aaltonen")
+    search_bar = Search_Bar()
+    results = search_bar.search("Swim")
+    for result in results:
+        print(result)
 
 if __name__ == "__main__":
     main()
