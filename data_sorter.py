@@ -166,9 +166,37 @@ def display_info(value):
 
         return sport_info_dict
 
+    elif value in df['Event'].values:
+        event_df = df[df['Event'] == value]
+
+        last_5_gold_winners = (event_df[event_df['Medal'] == 'Gold']
+                               .sort_values(by='Year', ascending=False)
+                               .head(5)[['Name', 'Year', 'Team']])
+
+        last_5_silver_winners = (event_df[event_df['Medal'] == 'Silver']
+                                 .sort_values(by='Year', ascending=False)
+                                 .head(5)[['Name', 'Year', 'Team']])
+
+        last_5_bronze_winners = (event_df[event_df['Medal'] == 'Bronze']
+                                 .sort_values(by='Year', ascending=False)
+                                 .head(5)[['Name', 'Year', 'Team']])
+
+        event_info_dict = {
+            "Event": value,
+            "last_5_gold_winners": last_5_gold_winners.to_dict(orient='records'),
+            "last_5_silver_winners": last_5_silver_winners.to_dict(orient='records'),
+            "last_5_bronze_winners": last_5_bronze_winners.to_dict(orient='records')
+        }
+
+        return event_info_dict
+
+        
+
+
+
 def main():
 
-    print(display_info("Sailing"))
+    print(display_info("Athletics Men's Javelin Throw"))
 
 
 if __name__ == "__main__":
