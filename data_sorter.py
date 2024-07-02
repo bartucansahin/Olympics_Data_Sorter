@@ -1,6 +1,6 @@
 import pandas as pd
 
-df = pd.read_csv('/home/bart/workplace/Olympics_Data_Sorter/olym_data.csv')
+df = pd.read_csv("/home/bart/workplace/Olympics_Data_Sorter/Merged_Data.csv")
 
 all_countries = set(df["Team"].unique())
 all_athletes = set(df["Name"].unique())
@@ -30,47 +30,52 @@ def sort_countries_by_medals(df):
 
 class Search_Bar:
     def __init__(self):
-        self.objects = self._initialize_objects()
+        self.all_sports_lower = {sport.lower(): sport for sport in all_sports}
+        self.all_athletes_lower = {athlete.lower(): athlete for athlete in all_athletes}
+        self.all_countries_lower = {country.lower(): country for country in all_countries}
+        
+        self.df_lower_name_map = self._create_name_map(df)
 
-    def _initialize_objects(self):
-        sports = list(all_sports)
-        athletes = list(all_athletes)
-        countries = list(all_countries)
-
-        return sports + athletes + countries
+    def _create_name_map(self, df):
+        name_map = {}
+        for _, row in df.iterrows():
+            name_lower = row['Name'].lower()
+            if name_lower not in name_map:
+                name_map[name_lower] = []
+            name_map[name_lower].append(row)
+        return name_map
 
     def search(self, word):
         word_lower = word.lower()
-        matches = [obj for obj in self.objects if word_lower in obj.lower()]
-        matches.sort(key=lambda obj: (not obj.lower().startswith(word_lower), obj))
-
         results = []
-        for match in matches:
-            if match in all_sports:
-                result = {
-                    "id": None,
-                    "Name": match,
-                    "type": 0,
-                    "NOC": None
-                }
-            elif match in all_athletes:
-                athlete_info = df[df['Name'].str.lower() == match.lower()].iloc[0]
-                result = {
-                    "id": int(athlete_info['ID']),
-                    "Name": athlete_info['Name'],
-                    "type": 1,
-                    "NOC": None
-                }
-            elif match in all_countries:
-                result = {
-                    "id": None,
-                    "Name": match,
-                    "type": 2,
-                    "NOC": match
-                }
-            results.append(result)
 
+        def add_result(name_map, obj_type, noc_value=None):
+            for key, value in name_map.items():
+                if word_lower in key:
+                    if obj_type in (0, 2):
+                        results.append({
+                            "id": None,
+                            "Name": value,
+                            "type": obj_type,
+                            "NOC": noc_value(value) if noc_value else None
+                        })
+                    else:
+                        athlete_infos = self.df_lower_name_map.get(key, [])
+                        for athlete_info in athlete_infos:
+                            results.append({
+                                "id": int(athlete_info['ID']),
+                                "Name": athlete_info['Name'],
+                                "type": obj_type,
+                                "NOC": athlete_info['NOC']
+                            })
+
+        add_result(self.all_sports_lower, 0)
+        add_result(self.all_athletes_lower, 1)
+        add_result(self.all_countries_lower, 2, lambda x: x)
+
+        results.sort(key=lambda obj: (not obj['Name'].lower().startswith(word_lower), obj['Name']))
         return results
+
 
 def display_info(value):
     if value in df['Name'].values:
@@ -196,8 +201,9 @@ def display_info(value):
 
 def main():
 
-    print(display_info("Athletics Men's Javelin Throw"))
-
+    search_bar = Search_Bar()
+    results = search_bar.search("John")
+    print(results)
 
 if __name__ == "__main__":
     main()
