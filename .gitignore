@@ -3,3 +3,7 @@ athlete_events.csv
 __pycache__/
 athlete_events.csv:Zone.Identifier
 config.py
+models.py
+alembic.ini
+load_data.py
+alembic/
