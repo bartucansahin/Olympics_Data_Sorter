@@ -30,10 +30,10 @@ def sort_countries_by_medals(df):
 
 class Search_Bar:
     def __init__(self):
+        # Assume these are defined globally or provided elsewhere in the actual implementation
         self.all_sports_lower = {sport.lower(): sport for sport in all_sports}
         self.all_athletes_lower = {athlete.lower(): athlete for athlete in all_athletes}
         self.all_countries_lower = {country.lower(): country for country in all_countries}
-        
         self.df_lower_name_map = self._create_name_map(df)
 
     def _create_name_map(self, df):
@@ -45,36 +45,69 @@ class Search_Bar:
             name_map[name_lower].append(row)
         return name_map
 
+class Search_Bar:
+    def __init__(self):
+        self.all_sports_lower = {sport.lower(): sport for sport in all_sports}
+        self.all_athletes_lower = {athlete.lower(): athlete for athlete in all_athletes}
+        self.all_countries_lower = {country.lower(): country for country in all_countries}
+
     def search(self, word):
         word_lower = word.lower()
         results = []
-
-        def add_result(name_map, obj_type, noc_value=None):
+        seen_ids = set()
+        
+        def add_result(name_map, obj_type, noc_value=None, exact=False):
             for key, value in name_map.items():
-                if word_lower in key:
+                if len(results) >= 30:
+                    return
+                if (exact and key == word_lower) or (not exact and word_lower in key):
                     if obj_type in (0, 2):
-                        results.append({
-                            "id": None,
-                            "Name": value,
-                            "type": obj_type,
-                            "NOC": noc_value(value) if noc_value else None
-                        })
-                    else:
-                        athlete_infos = self.df_lower_name_map.get(key, [])
-                        for athlete_info in athlete_infos:
+                        if value not in seen_ids:
                             results.append({
-                                "id": int(athlete_info['ID']),
-                                "Name": athlete_info['Name'],
+                                "id": None,
+                                "Name": value,
                                 "type": obj_type,
-                                "NOC": athlete_info['NOC']
+                                "NOC": noc_value(value) if noc_value else None
                             })
+                            seen_ids.add(value)
+                            if len(results) >= 30:
+                                return
 
-        add_result(self.all_sports_lower, 0)
-        add_result(self.all_athletes_lower, 1)
-        add_result(self.all_countries_lower, 2, lambda x: x)
+        def add_athlete_results(word_lower, exact=False):
+            if exact:
+                df_filtered = df[df['Name'].str.lower() == word_lower]
+            else:
+                df_filtered = df[df['Name'].str.lower().str.contains(word_lower)]
+            
+            for _, athlete_info in df_filtered.iterrows():
+                if len(results) >= 30:
+                    return
+                if athlete_info['ID'] not in seen_ids:
+                    results.append({
+                        "id": int(athlete_info['ID']),
+                        "Name": athlete_info['Name'],
+                        "type": 1,
+                        "NOC": athlete_info['NOC']
+                    })
+                    seen_ids.add(athlete_info['ID'])
+                    if len(results) >= 30:
+                        return
 
-        results.sort(key=lambda obj: (not obj['Name'].lower().startswith(word_lower), obj['Name']))
-        return results
+        add_result(self.all_sports_lower, 0, exact=True)
+        add_result(self.all_athletes_lower, 1, exact=True)
+        add_result(self.all_countries_lower, 2, lambda x: x, exact=True)
+        add_athlete_results(word_lower, exact=True)
+
+        if len(results) < 30:
+            add_result(self.all_sports_lower, 0)
+            add_result(self.all_athletes_lower, 1)
+            add_result(self.all_countries_lower, 2, lambda x: x)
+            add_athlete_results(word_lower)
+
+        return results[:30]
+
+
+
 
 
 def display_info(value):
