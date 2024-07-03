@@ -36,57 +36,63 @@ class Search_Bar:
 
     def search(self, word):
         word_lower = word.lower()
-        results = []
+        exact_results = []
+        partial_results = []
         seen_ids = set()
-        
+
         def add_result(name_map, obj_type, noc_value=None, exact=False):
+            target_list = exact_results if exact else partial_results
             for key, value in name_map.items():
-                if len(results) >= 30:
+                if len(exact_results) + len(partial_results) >= 30:
                     return
                 if (exact and key == word_lower) or (not exact and word_lower in key):
                     if obj_type in (0, 2):
                         if value not in seen_ids:
-                            results.append({
+                            target_list.append({
                                 "id": None,
                                 "Name": value,
                                 "type": obj_type,
                                 "NOC": noc_value(value) if noc_value else None
                             })
                             seen_ids.add(value)
-                            if len(results) >= 30:
+                            if len(exact_results) + len(partial_results) >= 30:
                                 return
 
         def add_athlete_results(word_lower, exact=False):
+            target_list = exact_results if exact else partial_results
             if exact:
                 df_filtered = df[df['Name'].str.lower() == word_lower]
             else:
                 df_filtered = df[df['Name'].str.lower().str.contains(word_lower)]
-            
+
             for _, athlete_info in df_filtered.iterrows():
-                if len(results) >= 30:
+                if len(exact_results) + len(partial_results) >= 30:
                     return
                 if athlete_info['ID'] not in seen_ids:
-                    results.append({
+                    target_list.append({
                         "id": int(athlete_info['ID']),
                         "Name": athlete_info['Name'],
                         "type": 1,
                         "NOC": athlete_info['NOC']
                     })
                     seen_ids.add(athlete_info['ID'])
-                    if len(results) >= 30:
+                    if len(exact_results) + len(partial_results) >= 30:
                         return
 
+        # Add exact matches first
         add_result(self.all_sports_lower, 0, exact=True)
         add_result(self.all_athletes_lower, 1, exact=True)
         add_result(self.all_countries_lower, 2, lambda x: x, exact=True)
         add_athlete_results(word_lower, exact=True)
 
-        if len(results) < 30:
+        # Add partial matches if less than 30 results
+        if len(exact_results) + len(partial_results) < 30:
             add_result(self.all_sports_lower, 0)
             add_result(self.all_athletes_lower, 1)
             add_result(self.all_countries_lower, 2, lambda x: x)
             add_athlete_results(word_lower)
 
+        results = exact_results + partial_results
         return results[:30]
 
 
