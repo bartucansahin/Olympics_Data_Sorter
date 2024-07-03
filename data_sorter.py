@@ -30,23 +30,6 @@ def sort_countries_by_medals(df):
 
 class Search_Bar:
     def __init__(self):
-        # Assume these are defined globally or provided elsewhere in the actual implementation
-        self.all_sports_lower = {sport.lower(): sport for sport in all_sports}
-        self.all_athletes_lower = {athlete.lower(): athlete for athlete in all_athletes}
-        self.all_countries_lower = {country.lower(): country for country in all_countries}
-        self.df_lower_name_map = self._create_name_map(df)
-
-    def _create_name_map(self, df):
-        name_map = {}
-        for _, row in df.iterrows():
-            name_lower = row['Name'].lower()
-            if name_lower not in name_map:
-                name_map[name_lower] = []
-            name_map[name_lower].append(row)
-        return name_map
-
-class Search_Bar:
-    def __init__(self):
         self.all_sports_lower = {sport.lower(): sport for sport in all_sports}
         self.all_athletes_lower = {athlete.lower(): athlete for athlete in all_athletes}
         self.all_countries_lower = {country.lower(): country for country in all_countries}
@@ -105,9 +88,6 @@ class Search_Bar:
             add_athlete_results(word_lower)
 
         return results[:30]
-
-
-
 
 
 def display_info(value):
