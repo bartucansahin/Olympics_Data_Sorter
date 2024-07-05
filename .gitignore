@@ -8,3 +8,6 @@ alembic/
 requirements.txt
 wait-for-it.sh
 .env
+Merged_Data.csv
+olym_data.csv
+modify_data.py
