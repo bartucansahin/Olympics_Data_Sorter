@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+
+  web:
+    build: .
+    command: ["./wait-for-it.sh", "db:3306", "--", "flask", "run", "--host=0.0.0.0"]
+    volumes:
+      - .:/code
+      - /home/bart/workplace/Olympics_Data_Sorter/Merged_Data.csv:/code/Merged_Data.csv
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    environment:
+      FLASK_APP: api.py
+      FLASK_ENV: development
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: ${DB_HOST}
+      DB_NAME: ${DB_NAME}
+      DATABASE_URL: ${DATABASE_URL}
+
+volumes:
+  db_data:
