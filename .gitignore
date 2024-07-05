@@ -11,3 +11,8 @@ wait-for-it.sh
 Merged_Data.csv
 olym_data.csv
 modify_data.py
+Quote and Integer ModifyCSV.py
+2020_Olympics_Dataset.csv:Zone.Identifier
+Olympics_aws_keyPair.pem
+Olympics_aws_keyPair.pem:Zone.Identifier
+nginx.conf
