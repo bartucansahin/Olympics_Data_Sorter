@@ -1,7 +1,7 @@
 import pandas as pd
 import difflib
 
-df = pd.read_csv("/home/bart/workplace/Olympics_Data_Sorter/Merged_Data.csv")
+df = pd.read_csv("/code/Merged_Data.csv")
 
 all_countries = set(df["Team"].unique())
 all_athletes = set(df["Name"].unique())
