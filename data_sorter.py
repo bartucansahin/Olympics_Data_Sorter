@@ -89,13 +89,11 @@ class Search_Bar:
                 if len(start_matches) + len(contain_matches) >= 30:
                     return
 
-        # Add exact matches first
         add_result(self.all_sports_lower, 0, exact=True)
         add_result(self.all_athletes_lower, 1, exact=True)
         add_result(self.all_countries_lower, 2, lambda x: x, exact=True)
         add_athlete_results(word_lower, exact=True)
 
-        # Add partial matches if less than 30 results
         if len(start_matches) + len(contain_matches) < 30:
             add_result(self.all_sports_lower, 0)
             add_result(self.all_athletes_lower, 1)
