@@ -10,10 +10,8 @@ app = Flask(__name__)
 
 DATABASE_URL = os.getenv('DATABASE_URL', 'mysql+pymysql://root:U628DgZS=ZW7@db/olympics')
 
-# Debugging: Print DATABASE_URL
 print(f"DATABASE_URL: {DATABASE_URL}")
 
-# Create a SQLAlchemy engine
 engine = create_engine(DATABASE_URL)
 Session = sessionmaker(bind=engine)
 session = Session()
@@ -41,14 +39,11 @@ def get_sports():
 
 @app.route('/countries/medals', methods=['GET'])
 def get_countries_by_medals():
-    # Query all relevant columns from the database
     query = session.query(Athlete.team, Athlete.medal).all()
     
-    # Convert query result to a DataFrame
     data = [{'Team': team, 'Medal': medal} for team, medal in query]
     df = pd.DataFrame(data)
     
-    # Use existing sorting logic
     sorted_medals = sort_countries_by_medals(df)
     return sorted_medals.to_json(orient='records')
 
