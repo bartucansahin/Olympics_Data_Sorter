@@ -20,6 +20,7 @@ Clone this repository to your local machine using:
 ```sh
 git clone https://github.com/your-repo/Olympics_Data_Sorter.git
 cd Olympics_Data_Sorter
+```sh
 
 ### Step 2: Create and Activate a Virtual Environment
 
