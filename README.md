@@ -11,23 +11,23 @@ The Olympics Data Sorter API provides several endpoints to interact with the Oly
 - **Description**: Retrieves a list of all athletes in a sorted list.
 
 ### 2. Get All Countries
-- **Endpoint**: "/countries"
-- **Method**: GET
+- **Endpoint**: `/countries`
+- **Method**: `GET`
 - **Description**: Retrieves a list of all countries in a sorted list.
 
 ### 3. Get All Sports
-- **Endpoint**: "/sports"
-- **Method**: GET
+- **Endpoint**: `/sports`
+- **Method**: `GET`
 - **Description**: Retrieves a list of all sports in a sorted list.
 
 ### 3. Get All Countries sorted by Medals
-- **Endpoint**: "/countries/medals"
-- **Method**: GET
+- **Endpoint**: `/countries/medals`
+- **Method**: `GET`
 - **Description**: Retrieves a list of all countries in sorted order by most medal winners.
 
 ### 4. Search Endpoint
-- **Endpoint**: "/countries/medals"
-- **Method**: GET
+- **Endpoint**: `/countries/medals`
+- **Method**: `GET`
 - **Description**: Searches for athletes, countries, or sports based on the query parameter `q`. Returns 30 values in an array, sorted by exact matches first.
 
 **Query Parameters**:
@@ -38,8 +38,8 @@ The Olympics Data Sorter API provides several endpoints to interact with the Oly
 curl -X GET "http://localhost:5000/search?q=athlete_name"
 ```
 ### 5. Info Endpoint
-- **Endpoint**: "/info"
-- **Method**: GET
+- **Endpoint**: `/info`
+- **Method**: `GET`
 - **Description**: Retrieves information about an athlete, country, or sport based on the query parameter `value`.
 
 **Query Parameters**:
