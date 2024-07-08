@@ -2,6 +2,55 @@
 
 This project is designed to sort and analyze data related to the Olympics. The application is built using Python, Flask, and SQLAlchemy, and it leverages Docker for containerization.
 
+## API Endpoints
+The Olympics Data Sorter API provides several endpoints to interact with the Olympics data returning in JSON format. Below are the available endpoints and their capabilities:
+
+### 1. Get All Athletes
+- **Endpoint**: `/athletes`
+- **Method**: `GET`
+- **Description**: Retrieves a list of all athletes in a sorted list.
+
+### 2. Get All Countries
+- **Endpoint**: "/countries"
+- **Method**: GET
+- **Description**: Retrieves a list of all countries in a sorted list.
+
+### 3. Get All Sports
+- **Endpoint**: "/sports"
+- **Method**: GET
+- **Description**: Retrieves a list of all sports in a sorted list.
+
+### 3. Get All Countries sorted by Medals
+- **Endpoint**: "/countries/medals"
+- **Method**: GET
+- **Description**: Retrieves a list of all countries in sorted order by most medal winners.
+
+### 4. Search Endpoint
+- **Endpoint**: "/countries/medals"
+- **Method**: GET
+- **Description**: Searches for athletes, countries, or sports based on the query parameter `q`. Returns 30 values in an array, sorted by exact matches first.
+
+**Query Parameters**:
+- `q` (string): The search query
+
+**Example Request**:
+```sh
+curl -X GET "http://localhost:5000/search?q=athlete_name"
+```
+### 5. Info Endpoint
+- **Endpoint**: "/info"
+- **Method**: GET
+- **Description**: Retrieves information about an athlete, country, or sport based on the query parameter `value`.
+
+**Query Parameters**:
+- `value` (string): The value to get information for
+
+**Example Request**:
+```sh
+curl -X GET "http://localhost:5000/info?value=athlete_name"
+```
+
+
 ## Prerequisites
 
 Before you begin, ensure you have met the following requirements:
