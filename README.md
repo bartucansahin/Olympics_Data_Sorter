@@ -144,6 +144,7 @@ Olympics_Data_Sorter/
 ├── wait-for-it.sh
 ├── api.py
 └── README.md
+```
 
 # Dependencies
 The project dependencies are listed in the `requirements.txt` file and include:
